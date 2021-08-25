@@ -26,7 +26,7 @@ namespace CrashCourse2021ExercisesDayOne.Utils
 
         internal string StringToUpperCase(string value1)
         {
-            throw new NotImplementedException();
+            return value1.ToUpper();
         }
 
         internal string AdditionFromPlusString(string inputString)
