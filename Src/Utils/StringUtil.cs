@@ -48,7 +48,7 @@ namespace CrashCourse2021ExercisesDayOne.Utils
             }
 
             return sum.ToString();
-            throw new NotImplementedException();
+            throw new NotImplementedException(); 
         }
 
         internal string EvenNumber(int numbertoTest)
