@@ -6,12 +6,7 @@ namespace CrashCourse2021ExercisesDayOne.Utils
     {
         internal int LengthOfString(string stringToMeasure)
         {
-            if (stringToMeasure == null)
-            {
-                throw new NullReferenceException(Constants.StringCannotBeNull);
-            }
-
-            throw new NotImplementedException();
+            return stringToMeasure.Length;
         }
 
         internal string SumStrings(string value1, string value2)
