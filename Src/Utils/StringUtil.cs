@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata;
 
 namespace CrashCourse2021ExercisesDayOne.Utils
 {
@@ -36,7 +37,7 @@ namespace CrashCourse2021ExercisesDayOne.Utils
 
         internal string EvenNumber(int numbertoTest)
         {
-            throw new NotImplementedException();
+            return numbertoTest % 2 == 0 ? "EVEN" : "ODD";
         }
     }
 }
