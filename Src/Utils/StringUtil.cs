@@ -16,7 +16,7 @@ namespace CrashCourse2021ExercisesDayOne.Utils
 
         internal string DivideString(string value1, string value2)
         {
-            throw new NotImplementedException();
+            return (Int32.Parse(value1) / Int32.Parse(value2)).ToString();
         }
 
         internal string StringContains(string value1, string value2)
