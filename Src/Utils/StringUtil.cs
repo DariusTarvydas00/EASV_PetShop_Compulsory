@@ -40,6 +40,14 @@ namespace CrashCourse2021ExercisesDayOne.Utils
 
         internal string AdditionFromPlusString(string inputString)
         {
+            var sum = 0;
+            string[] numbers = inputString.Split('+');
+            foreach (var number in numbers)
+            {
+                sum += Int32.Parse(number);
+            }
+
+            return sum.ToString();
             throw new NotImplementedException();
         }
 
