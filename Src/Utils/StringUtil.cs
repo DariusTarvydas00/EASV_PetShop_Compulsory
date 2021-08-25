@@ -21,7 +21,7 @@ namespace CrashCourse2021ExercisesDayOne.Utils
 
         internal string StringContains(string value1, string value2)
         {
-            throw new NotImplementedException();
+            return value1.Contains(value2) ? "YES" : "NO";
         }
 
         internal string StringToUpperCase(string value1)
