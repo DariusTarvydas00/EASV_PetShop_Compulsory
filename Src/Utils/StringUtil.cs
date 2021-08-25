@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection.Metadata;
+using Xunit.Sdk;
 
 namespace CrashCourse2021ExercisesDayOne.Utils
 {
@@ -7,7 +8,14 @@ namespace CrashCourse2021ExercisesDayOne.Utils
     {
         internal int LengthOfString(string stringToMeasure)
         {
-            return stringToMeasure.Length;
+            try
+            {
+                return stringToMeasure.Length;
+            }
+            catch (NullReferenceException)
+            {
+                throw new NullReferenceException(Constants.StringCannotBeNull);
+            }
         }
 
         internal string SumStrings(string value1, string value2)
