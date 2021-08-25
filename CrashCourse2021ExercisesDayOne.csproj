@@ -6,10 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Tests\" />
-    <Folder Include="Src\" />
-    <Folder Include="Tests\Utils\" />
-    <Folder Include="Src\Utils\" />
+    <Folder Include="CSharpCourse2021ExercisesDayOne" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.1" />
