@@ -30,7 +30,7 @@ namespace CrashCourse2021ExercisesDayOne.Utils
 
         internal string StringContains(string value1, string value2)
         {
-            return value1.Contains(value2) ? "YES" : "NO";
+            return value1.Contains(value2) ? "YES" : "NSO" ;
         }
 
         internal string StringToUpperCase(string value1)
