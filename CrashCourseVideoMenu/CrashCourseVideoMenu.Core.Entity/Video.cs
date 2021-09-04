@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CrashCourseVideoMenu
+namespace CrashCourseVideoMenu.Core.Entity
 {
     public class Video
     {

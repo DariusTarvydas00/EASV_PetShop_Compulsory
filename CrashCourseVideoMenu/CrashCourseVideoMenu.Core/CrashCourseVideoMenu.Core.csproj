@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\CrashCourseVideoMenu.Core.Entity\CrashCourseVideoMenu.Core.Entity.csproj" />
-      <ProjectReference Include="..\CrashCourseVideoMenu.Core\CrashCourseVideoMenu.Core.csproj" />
-      <ProjectReference Include="..\CrashCourseVideoMenu.Infrastructure.Static.Data\CrashCourseVideoMenu.Infrastructure.Static.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ApplicationService" />
     </ItemGroup>
 
 </Project>
