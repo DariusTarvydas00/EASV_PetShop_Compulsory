@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace CrashCourseVideoMenu.Core.Entity
 {
@@ -9,5 +10,6 @@ namespace CrashCourseVideoMenu.Core.Entity
         public DateTime ReleaseDate { get; set; }
         public string StoryLine { get; set; }
         public string Genre { get; set; }
+       
     }
 }

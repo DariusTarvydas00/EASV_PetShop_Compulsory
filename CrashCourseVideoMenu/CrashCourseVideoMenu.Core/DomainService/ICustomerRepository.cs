@@ -7,7 +7,7 @@ namespace CrashCourseVideoMenu.Core.DomainService
     {
         Customer Create(Customer customer);
         Customer ReadById(int id);
-        List<Customer> ReadAll();
+        IEnumerable<Customer> ReadAll();
         Customer Update(Customer customerUpdate);
         Customer Delete(int id);
     }

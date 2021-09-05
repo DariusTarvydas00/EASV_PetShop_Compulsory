@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CrashCourseVideoMenu.Core.ApplicationService;
+using CrashCourseVideoMenu.Core.ApplicationService.Services;
 using CrashCourseVideoMenu.Core.DomainService;
-using CrashCourseVideoMenu.Core.Entity;
 using CrashCourseVideoMenu.Infrastructure.Static.Data.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CrashCourseVideoMenu
 {
@@ -10,7 +10,13 @@ namespace CrashCourseVideoMenu
     {
         private static void Main(string[] args)
         {
-            var printer = new Printer();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddScoped<ICustomerRepository, CustomerRepository>();
+            serviceCollection.AddScoped<ICustomerService, CustomerService>();
+            serviceCollection.AddScoped<IPrinter, Printer>();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var printer = serviceProvider.GetRequiredService<IPrinter>();
+            printer.StartUI();
         }
     }
 }

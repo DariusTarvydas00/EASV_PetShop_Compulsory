@@ -22,7 +22,7 @@ namespace CrashCourseVideoMenu.Infrastructure.Static.Data.Repositories
             return _customers.FirstOrDefault(customer => customer.Id == id);
         }
 
-        public List<Customer> ReadAll()
+        public IEnumerable<Customer> ReadAll()
         {
             return _customers;
         }

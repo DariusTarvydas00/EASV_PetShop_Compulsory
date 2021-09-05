@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using CrashCourseVideoMenu.Core.ApplicationService;
 using CrashCourseVideoMenu.Core.DomainService;
 using CrashCourseVideoMenu.Core.Entity;
 using CrashCourseVideoMenu.Infrastructure.Static.Data.Repositories;
@@ -7,21 +9,34 @@ using CrashCourseVideoMenu.Infrastructure.Static.Data.Repositories;
 namespace CrashCourseVideoMenu
 {
 
-    public class Printer
+    public class Printer: IPrinter
     {
-        ICustomerRepository customerRepository;
-     readonly List<Video> Videos = new List<Video>();
+        
+        #region Repository area
+        ICustomerService _customerService;
+        IVideoRepository videoRepository;
+        #endregion
+
+        #region Allmenus
+
      string[] CurrentMenu;
 
-        string[] MenuItems =
-        {
-            "Video",
-            "Customer",
-            "Search",
-            "Exit"
-        };
+     public void StartUI()
+     {
+            ShowMenu(CurrentMenu);
+         
+     }
 
-        string[] VideoMenuItems =
+     string[] MenuItems =
+         {
+             "Video",
+             "Customer",
+             "Search",
+             "Exit"
+         };
+     
+
+     string[] VideoMenuItems =
         {
             "Add video", 
             "Delete video", 
@@ -46,17 +61,25 @@ namespace CrashCourseVideoMenu
             "Search for a customer",
             "Go back"
         };
+        
+        #endregion
 
-        public Printer(){
-            customerRepository = new CustomerRepository();
+        public Printer(ICustomerService customerService)
+        {
+            _customerService = customerService;
             CurrentMenu = MenuItems;
-            AddVideo1();
-            AddVideo2();
-            AddCustomer1();
-            AddCustomer2();
-            ShowMenu(CurrentMenu); 
         }
 
+        #region Menu
+            
+            void PrintCurrentMenu(string[] menu)
+            {
+                for (var i = 0; i < menu.Length; i++)
+                {
+                    Console.WriteLine($"{i+1}. {menu[i]}");
+                }
+                Console.WriteLine($"{Constants.EnterValueBetween} 1 and {menu.Length}");
+            }
         void ShowMenu(string[] menu)
         {
             var shouldContinue = true;
@@ -145,10 +168,13 @@ namespace CrashCourseVideoMenu
             switch (number)
             {
                 case 1 :
-                    SearchForAVideo();
+                    var title = AskQuestion("Title: ");
+                    var releaseDate = AskQuestion("Release Date: ");
+                    var storyLine = AskQuestion("Story Line: ");
+                    var genre = AskQuestion("Genre: ");
                     break;
                 case 2 :
-                    SearchForACustomerById();
+                    PrintFindCutomerById();
                     break;
             }
         }
@@ -158,16 +184,35 @@ namespace CrashCourseVideoMenu
             switch (number)
             {
                 case 1 :
-                    AddCustomer();
+                    var firstName = AskQuestion("First name: ");
+                    var lastName = AskQuestion("Last name: ");
+                    var birthOfDate = AskQuestion("Date of birth: ");
+                    var customer = _customerService.NewCustomer(firstName, lastName, birthOfDate);
+                    _customerService.CreateCustomer(customer);
                     break;
                 case 2 :
-                    DeleteCustomer();
+                    var idForDelete = PrintFindCutomerById();
+                    _customerService.DeleteCustomer(idForDelete);
                     break;
                 case 3 :
-                    ListAllCustomers();
+                    var idForEdit = PrintFindCutomerById();
+                    var customerToEdit = _customerService.FindCustomerById(idForEdit);
+                    var newFirstName = AskQuestion("First name: ");
+                    var newLastName = AskQuestion("Last name: ");
+                    var newBirthOfDate = AskQuestion("Date of birth: ");
+                    _customerService.UpdateCustomer(new Customer()
+                    {
+                        Id = idForEdit,
+                        Name = newFirstName,
+                        Surname = newLastName,
+                        DateOfBirth = newBirthOfDate
+                    });
                     break;
                 case 4 :
-                    SearchForACustomerById();
+                    _customerService.GetAllCustomers();
+                    break;
+                case 5 :
+                    PrintFindCutomerById();
                     break;
             }
         }
@@ -180,13 +225,13 @@ namespace CrashCourseVideoMenu
                     AddVideo();
                     break;
                 case 2 :
-                    DeleteVideo();
+                    DeleteVideo(int.Parse(Console.ReadLine()));
                     break;
                 case 3 :
                     ListAllVideos();
                     break;
                 case 4 :
-                    SearchForAVideo();
+                    PrintFindVideoById();
                     break;
                 case 5 :
                     SearchForAGenre();
@@ -194,8 +239,10 @@ namespace CrashCourseVideoMenu
             }
         }
         
+        #endregion
         
-        Customer SearchForACustomerById()
+        //UI
+        int PrintFindCutomerById()
         {
             Console.WriteLine("Enter customer id:");
             int id;
@@ -203,53 +250,23 @@ namespace CrashCourseVideoMenu
             {
                 Console.WriteLine(Constants.InvalidNumber);
             }
-            return customerRepository.ReadById(id);
+
+            return id;
         }
 
-        void ListAllCustomers()
+        string AskQuestion(string question)
         {
-            PrintAllCustomers();
+            Console.WriteLine(question);
+            return Console.ReadLine();
         }
-
-        void DeleteCustomer()
-        {
-            var customerFound = SearchForACustomerById();
-                if (customerFound != null)
-                {
-                    customerRepository.Delete(customerFound.Id);
-                }
-        }
-
-        void PrintAllCustomers()
-        {
-            foreach (var customer in customerRepository.ReadAll())
-            {
-                Console.WriteLine($"Id: {customer.Id} Name: {customer.Name} Surname: {customer.Surname} Date of Birth: {customer.DateOfBirth}");
-            }
-        }
-
-        void AddCustomer()
-        {
-            Console.WriteLine($"Enter Name: ");
-            string name = Console.ReadLine();
-            Console.WriteLine($"SurName: ");
-            string surName = Console.ReadLine();
-            Console.WriteLine($"Date Of Birth: ");
-            string dateOfBirth = Console.ReadLine();
-            var cust = new Customer()
-            {
-                Name = name,
-                Surname = surName,
-                DateOfBirth = dateOfBirth,
-            };
-            customerRepository.Create(cust);
-        }
+        
+        #region Video
         
         void SearchForAGenre()
         {
             Console.WriteLine("Enter Genre for search:");
             string genre = Console.ReadLine();
-            foreach (var video in Videos)
+            foreach (var video in videoRepository.ReadAll())
             {
                 if (video.Genre == genre.ToLower())
                 {
@@ -258,37 +275,21 @@ namespace CrashCourseVideoMenu
             }
         }
         
-        void SearchForAVideo()
+        Video FindVideoById(int id)
         {
-            string enteredValue = Console.ReadLine();
-            if (int.TryParse(enteredValue, out int number))
+            return videoRepository.ReadById(id);
+        }
+
+        int PrintFindVideoById()
+        {
+            Console.WriteLine("Enter customer id:");
+            int id;
+            while (!int.TryParse(Console.ReadLine(), out id))
             {
-                foreach (var video in Videos)
-                {
-                    if (video.Id == number)
-                    {
-                        Console.WriteLine($"Id: {video.Id} Title: {video.Title}");
-                    }
-                }
+                Console.WriteLine(Constants.InvalidNumber);
             }
-            else
-            {
-                foreach (var video in Videos)
-                {
-                    if (video.Title.Contains(enteredValue))
-                    {
-                        Console.WriteLine($"Id: {video.Id} Title: {video.Title}");
-                    }
-                    else if (video.ReleaseDate.Equals(enteredValue))
-                    {
-                        Console.WriteLine($"Id: {video.Id} Title: {video.Title}");
-                    }
-                    else if (video.StoryLine.Contains(enteredValue))
-                    {
-                        Console.WriteLine($"Id: {video.Id} Title: {video.Title}");
-                    }
-                }
-            }
+
+            return id;
         }
 
         void ListAllVideos()
@@ -296,23 +297,14 @@ namespace CrashCourseVideoMenu
             PrintAllVideos();
         }
         
-        void DeleteVideo()
+        Video DeleteVideo(int id)
         {
-            PrintAllVideos();
-            Console.WriteLine($"Please select video to delete by id: ");
-            var idVideoToDelete = NumberOrNot();
-            foreach (var video in Videos)
-            {
-                if (video.Id == idVideoToDelete)
-                {
-                    Videos.Remove(video);
-                }
-            }
+            return videoRepository.Delete(id);
         }
 
         void PrintAllVideos()
         {
-            foreach (var video in Videos)
+            foreach (var video in videoRepository.ReadAll())
             {
                 Console.WriteLine($"Id: {video.Id} Title: {video.Title} Release Date: {video.ReleaseDate} Genre: {video.Genre} Story Line: {video.StoryLine}");
             }
@@ -328,7 +320,7 @@ namespace CrashCourseVideoMenu
             string genre = Console.ReadLine();
             Console.WriteLine($"Enter Story Line: ");
             string storyLine = Console.ReadLine();
-            Videos.Add(new Video()
+            videoRepository.Create(new Video()
             {
                 Title = title,
                 ReleaseDate = Convert.ToDateTime(releaseDate),
@@ -348,16 +340,7 @@ namespace CrashCourseVideoMenu
 
             return selection;
         }
-        
-        void PrintCurrentMenu(string[] menu)
-        {
-            for (var i = 0; i < menu.Length; i++)
-            {
-                Console.WriteLine($"{i+1}. {menu[i]}");
-            }
-            Console.WriteLine($"{Constants.EnterValueBetween} 1 and {menu.Length}");
-        }
-        
+
         int NumberOrNot()
         {
             int selection;
@@ -368,6 +351,10 @@ namespace CrashCourseVideoMenu
 
             return selection;
         }
+        
+        #endregion
+
+        #region Samples
 
         void AddCustomer1()
         {
@@ -377,7 +364,7 @@ namespace CrashCourseVideoMenu
                 Surname = "Johanson",
                 DateOfBirth = "1998.20.12"
             };
-            customerRepository.Create(cust1);
+            _customerService.CreateCustomer(cust1);
         }
 
         void AddCustomer2()
@@ -388,12 +375,12 @@ namespace CrashCourseVideoMenu
                 Surname = "Johanson",
                 DateOfBirth = "1998.18.01"
             };
-            customerRepository.Create(cust2);
+            _customerService.CreateCustomer(cust2);
         }
 
         void AddVideo1()
         {
-            Videos.Add(new Video()
+            videoRepository.Create(new Video()
             {
                 Title = "Star Wars",
                 ReleaseDate = Convert.ToDateTime("01.20.1992"),
@@ -404,7 +391,7 @@ namespace CrashCourseVideoMenu
         
         void AddVideo2()
         {
-            Videos.Add(new Video()
+            videoRepository.Create(new Video()
             {
                 Title = "Not Star Wars",
                 ReleaseDate = Convert.ToDateTime("01.20.1992"),
@@ -412,5 +399,15 @@ namespace CrashCourseVideoMenu
                 StoryLine = "Bam, Bam, Bam"
             });
         }
+
+        void addCustVid()
+        {
+            AddVideo1();
+            AddVideo2();
+            AddCustomer1();
+            AddCustomer2();
+        }
+        
+        #endregion
     }
 }
